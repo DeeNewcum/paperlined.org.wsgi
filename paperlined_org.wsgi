@@ -128,15 +128,6 @@ def application(environ, start_response):
     else:
         return mod_autoindex(environ, start_response, file_path)
 
-#    output = '<span style="background-color:red">Hello World -- ' + environ['PATH_INFO'] + '</span>' + '<br><tt>' + file_path + '</tt>'
-#
-#    output = str.encode(output)
-#    response_headers = [('Content-type', 'text/html'),
-#                        ('Content-Length', str(len(output)))]
-#    start_response(status, response_headers)
-#    return [output]
-
-
 
 read_mime_types()
 #print(mime_types)
