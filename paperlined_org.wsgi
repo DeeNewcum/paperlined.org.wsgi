@@ -4,6 +4,20 @@ import os, pathlib, re, sys
 
 WEBSITE_ROOT = '/var/www/html/paperlined.org/'
 
+# this could be a separate file
+HEADER = b'''
+<html>
+<head>
+</head>
+<body>
+<div style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
+    <a href="/" style="font-size:35px; font-weight:bold; color:#000!important;">paperlined.org</a><br/>
+    <span style="color:#777"><<DIRLIST>></span>
+</div><br/>
+<!-- End of Header -->
+
+'''
+
 # Returns a list of the file path completely split apart.
 # from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
 def splitall(path):
@@ -69,7 +83,17 @@ def serve_file(environ, start_response, file_path):
                 break
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
-    response_headers = [('Content-type', mime_types[file_extension]),
+    mime_type = mime_types[file_extension]
+    if mime_type == 'text/html':
+        # insert the header atop it
+        dir_list = str.encode(environ['PATH_INFO']).split(b'/')
+        dir_list.pop()      # drop the file name
+        dir_list.pop(0)     # drop the initial backslash
+        hdr = re.sub(b"<<DIRLIST>>", b' > '.join(dir_list), HEADER)
+
+        file_contents = hdr + file_contents
+
+    response_headers = [('Content-type', mime_type),
                         ('Content-Length', str(len(file_contents)))]
     start_response('200 OK', response_headers)
     return [file_contents]
