@@ -67,6 +67,14 @@ def read_mime_types():
             line = open_file.readline()
 
 
+def generate_header(environ):
+    dir_list = str.encode(environ['PATH_INFO']).split(b'/')
+    dir_list.pop()      # drop the file name
+    dir_list.pop(0)     # drop the initial backslash
+    hdr = re.sub(b"<<DIRLIST>>", b' > '.join(dir_list), HEADER)
+    return hdr
+
+
 def serve_file(environ, start_response, file_path):
     #output = "serve_file(" + file_path + ")"
     #output = str.encode(output)
@@ -85,13 +93,7 @@ def serve_file(environ, start_response, file_path):
     file_contents = b''.join(file_content_array)
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
-        # insert the header atop it
-        dir_list = str.encode(environ['PATH_INFO']).split(b'/')
-        dir_list.pop()      # drop the file name
-        dir_list.pop(0)     # drop the initial backslash
-        hdr = re.sub(b"<<DIRLIST>>", b' > '.join(dir_list), HEADER)
-
-        file_contents = hdr + file_contents
+        file_contents = generate_header(environ) + file_contents
 
     response_headers = [('Content-type', mime_type),
                         ('Content-Length', str(len(file_contents)))]
@@ -115,7 +117,7 @@ def mod_autoindex(environ, start_response, file_path):
         else:
             output += "<a href='" + fname + "'>" + fname + "</a><br/>\n"
 
-    output = str.encode(output)
+    output = generate_header(environ) + str.encode(output)
     response_headers = [('Content-type', 'text/html'),
                         ('Content-Length', str(len(output)))]
     start_response('200 OK', response_headers)
