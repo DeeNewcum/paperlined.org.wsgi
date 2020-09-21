@@ -1,4 +1,4 @@
-# this is currently hosted at -- http://localhost/myapp/
+# this is currently hosted at -- http://paperlined.localhost/
 
 import os, pathlib, re, sys
 
@@ -11,7 +11,7 @@ HEADER = b'''
 </head>
 <body>
 <div style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
-    <a href="/" style="font-size:35px; font-weight:bold; color:#000!important;">paperlined.org</a><br/>
+    <a href="/" style="font-size:35px; font-weight:bold; color:#000!important; text-decoration:none">paperlined.org</a><br/>
     <span style="color:#777"><<DIRLIST>></span>
 </div><br/>
 <!-- End of Header -->
@@ -71,6 +71,8 @@ def generate_header(environ):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
     dir_list.pop(0)     # drop the initial backslash
+    if environ['PATH_INFO'][-1] == '/' and len(dir_list) > 0:
+        dir_list.pop()          # we don't need to link to our current directory
     hdr = re.sub(b"<<DIRLIST>>", b' > '.join(dir_list), HEADER)
     return hdr
 
