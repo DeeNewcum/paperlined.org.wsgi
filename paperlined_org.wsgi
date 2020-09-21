@@ -144,12 +144,25 @@ def redirect_to_directory(environ, start_response, file_path):
     return [output]
 
 
+def error_404_not_exist(environ, start_response, file_path):
+    output = '<h3>Error: ' + environ['REQUEST_URI'] + ' not found</h3>'
+
+    output = str.encode(output)
+    response_headers = [('Content-type',   'text/html'),
+                        ('Content-Length', str(len(output)))
+                       ]
+    start_response('404 Not Found', response_headers)
+    return [output]
+
+
 # This is the main WSGI function, called every time there's a request.
 def application(environ, start_response):
     status = '200 OK'
 
     file_path = convert_URL_to_file_path(environ['PATH_INFO'])
-    if environ['PATH_INFO'][-1] != '/' and file_path[-1] == '/':    # redirect for example http://paperlined.org/apps to http://paperlined.org/apps/
+    if not os.path.exists(file_path):
+        return error_404_not_exist(environ, start_response, file_path)
+    elif environ['PATH_INFO'][-1] != '/' and file_path[-1] == '/':    # redirect for example http://paperlined.org/apps to http://paperlined.org/apps/
         return redirect_to_directory(environ, start_response, file_path)
     elif os.path.isfile(file_path):
         return serve_file(environ, start_response, file_path)
