@@ -97,7 +97,7 @@ def serve_file(environ, start_response, file_path):
     if mime_type == 'text/html':
         file_contents = generate_header(environ) + file_contents
 
-    response_headers = [('Content-type', mime_type),
+    response_headers = [('Content-type', mime_type + "; charset=utf-8"),
                         ('Content-Length', str(len(file_contents)))]
     start_response('200 OK', response_headers)
     return [file_contents]
