@@ -73,7 +73,12 @@ def generate_header(environ):
     dir_list.pop(0)     # drop the initial backslash
     if environ['PATH_INFO'][-1] == '/' and len(dir_list) > 0:
         dir_list.pop()          # we don't need to link to our current directory
-    hdr = re.sub(b"<<DIRLIST>>", b' > '.join(dir_list), HEADER)
+    url = b"/"
+    dir_list_str = b""
+    for dl in dir_list:
+        url += dl + b"/"
+        dir_list_str += b" &gt; <a href='" + url + b"'>" + dl + b"</a>"
+    hdr = re.sub(b"<<DIRLIST>>", dir_list_str[6:], HEADER)
     return hdr
 
 
