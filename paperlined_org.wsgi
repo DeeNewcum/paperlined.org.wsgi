@@ -1,6 +1,6 @@
 # this is currently hosted at -- http://paperlined.localhost/
 
-import os, pathlib, re, sys
+import markdown, os, pathlib, re, sys
 
 WEBSITE_ROOT = '/var/www/html/paperlined.org/'
 
@@ -82,10 +82,18 @@ def generate_header(environ):
     return hdr
 
 
-def serve_file(environ, start_response, file_path):
-    #output = "serve_file(" + file_path + ")"
-    #output = str.encode(output)
+def serve_markdown_file(environ, start_response, file_extension, file_contents):
+    if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
+        file_contents = file_contents[40:]
+    file_contents = str.encode(markdown.markdown(file_contents.decode('utf-8')))
+    file_contents = generate_header(environ) + file_contents
+    response_headers = [('Content-type', "text/html; charset=utf-8"),
+                        ('Content-Length', str(len(file_contents)))]
+    start_response('200 OK', response_headers)
+    return [file_contents]
 
+
+def serve_file(environ, start_response, file_path):
     file_content_array = []
     size = 0
     with open(file_path, mode='rb') as file:
@@ -98,6 +106,8 @@ def serve_file(environ, start_response, file_path):
                 break
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
+    if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
+        return serve_markdown_file(environ, start_response, file_extension, file_contents)
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
         file_contents = generate_header(environ) + file_contents

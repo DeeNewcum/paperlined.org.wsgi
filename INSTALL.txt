@@ -1,0 +1,3 @@
+Sometime during the installation of this, you should run these commands:
+
+    pip install markdown
