@@ -1,3 +1,7 @@
 Sometime during the installation of this, you should run these commands:
 
     pip install markdown
+
+Additionally, to run this inside Apache on Ubuntu, you'll probably want to:
+
+    apt install libapache2-mod-wsgi-py3 

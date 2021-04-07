@@ -2,7 +2,7 @@
 
 import markdown, os, pathlib, re, sys
 
-WEBSITE_ROOT = '/var/www/html/paperlined.org/'
+WEBSITE_ROOT = '/var/www/paperlined.org/'
 
 # this could be a separate file
 HEADER = b'''
