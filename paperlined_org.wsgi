@@ -129,6 +129,8 @@ def mod_autoindex(environ, start_response, file_path):
         #path = os.path.join(file_path, fname)
         path = str(filename)
         fname = splitall(path)[-1]
+        if fname[0] == '.':         # skip dotfiles
+            continue
         if os.path.isdir(path):
             output += "<a href='" + fname + "/'>" + fname + "/</a><br/>\n"
         else:
