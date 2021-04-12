@@ -1,4 +1,5 @@
-# this is currently hosted at -- http://paperlined.localhost/
+# This is a very thin layer that sits between the webserver (i.e. Apache) and the filesystem.
+# My site is static for the most part, but we do a bit of dynamic work here only.
 
 import markdown, os, pathlib, re, sys
 
