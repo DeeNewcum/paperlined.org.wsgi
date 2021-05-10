@@ -1,5 +1,7 @@
 # This is a very thin layer that sits between the webserver (i.e. Apache) and the filesystem.
 # My site is static for the most part, but we do a bit of dynamic work here only.
+#
+# Available at https://paperlined.org/ globally, or http://paperlined.localhost/ on my dev box.
 
 import markdown, os, pathlib, re, sys
 
