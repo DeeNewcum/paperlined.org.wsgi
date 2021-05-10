@@ -124,11 +124,9 @@ def mod_autoindex(environ, start_response, file_path):
             # -> It might work now, but I doubt it will after we switch to AWS Lambda.
 
     output = "<h2>Index of " + environ['REQUEST_URI'] + "</h2>"
-    files = sorted(pathlib.Path(file_path).iterdir(), key=os.path.getmtime, reverse=True)
-    #files = os.listdir(file_path)
+    files = os.listdir(file_path)
     for filename in files:
-        #path = os.path.join(file_path, fname)
-        path = str(filename)
+        path = os.path.join(file_path, filename)
         fname = splitall(path)[-1]
         if fname[0] == '.':         # skip dotfiles
             continue
