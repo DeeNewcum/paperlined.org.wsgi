@@ -135,9 +135,9 @@ def mod_autoindex(environ, start_response, file_path):
         if fname[0] == '.':         # skip dotfiles
             continue
         if os.path.isdir(path):
-            output += "<a href='" + fname + "/'>" + fname + "/</a><br/>\n"
+            output += "<a href='./" + fname + "/'>" + fname + "/</a><br/>\n"
         else:
-            output += "<a href='" + fname + "'>" + fname + "</a><br/>\n"
+            output += "<a href='./" + fname + "'>" + fname + "</a><br/>\n"
 
     output = generate_header(environ) + str.encode(output)
     response_headers = [('Content-type', 'text/html'),
