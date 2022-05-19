@@ -90,8 +90,9 @@ def generate_header(environ):
 def serve_markdown_file(environ, start_response, file_extension, file_contents):
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
         file_contents = file_contents[40:]
-    file_contents = str.encode(markdown.markdown(file_contents.decode('utf-8')))
-    file_contents = generate_header(environ) + file_contents
+    file_contents = markdown.markdown(file_contents.decode('utf-8'))
+    file_contents = "<link rel='stylesheet' href='/css/Python-Markdown.css' />" + file_contents
+    file_contents = generate_header(environ) + str.encode(file_contents)
     response_headers = [('Content-type', "text/html; charset=utf-8"),
                         ('Content-Length', str(len(file_contents)))]
     start_response('200 OK', response_headers)
