@@ -4,7 +4,7 @@
 # Available at https://paperlined.org/ globally, or http://paperlined.localhost/ on my dev box.
 
 
-import markdown, os, pathlib, re, sys
+import markdown, os, re
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -72,6 +72,7 @@ def read_mime_types():
             line = open_file.readline()
 
 
+# attach the cyan "paperlined.org" box that appears at the top of every page on this site
 def generate_header(environ):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
@@ -178,8 +179,6 @@ def error_404_not_exist(environ, start_response, file_path):
 
 # This is the main WSGI function, called every time there's a request.
 def application(environ, start_response):
-    status = '200 OK'
-
     file_path = convert_URL_to_file_path(environ['PATH_INFO'])
     if not os.path.exists(file_path):
         return error_404_not_exist(environ, start_response, file_path)
