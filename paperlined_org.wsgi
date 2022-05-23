@@ -5,6 +5,7 @@
 
 
 import markdown, os, re
+from datetime import datetime
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -18,7 +19,7 @@ HEADER = b'''
 <div style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
     <a href="/" style="font-size:35px; font-weight:bold; color:#000!important; text-decoration:none">paperlined.org</a><br/>
     <span style="color:#777"><<DIRLIST>></span>
-</div><br/>
+</div>
 <!-- End of Header -->
 
 '''
@@ -73,7 +74,7 @@ def read_mime_types():
 
 
 # attach the cyan "paperlined.org" box that appears at the top of every page on this site
-def generate_header(environ):
+def generate_header(environ, file_path):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
     dir_list.pop(0)     # drop the initial backslash
@@ -85,17 +86,26 @@ def generate_header(environ):
         url += dl + b"/"
         dir_list_str += b" &gt; <a href='" + url + b"'>" + dl + b"</a>"
     hdr = re.sub(b"<<DIRLIST>>", dir_list_str[6:], HEADER)
+    if environ['PATH_INFO'] != '/':
+        hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">last updated '
+        mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+        hdr += str.encode(mtime.strftime("%b %e, %Y"))
+        hdr += b'</div>'
+    else:
+        hdr += b'<br/>'
     return hdr
 
 
-def serve_markdown_file(environ, start_response, file_extension, file_contents):
+def serve_markdown_file(environ, start_response, file_extension, file_path, file_contents):
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
         file_contents = file_contents[40:]
     file_contents = markdown.markdown(file_contents.decode('utf-8'))
     file_contents = "<link rel='stylesheet' href='/css/Python-Markdown.css' />" + file_contents
-    file_contents = generate_header(environ) + str.encode(file_contents)
+    file_contents = generate_header(environ, file_path) + str.encode(file_contents)
+    mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', "text/html; charset=utf-8"),
-                        ('Content-Length', str(len(file_contents)))]
+                        ('Content-Length', str(len(file_contents))),
+                        ('Last-Modified', mtime.strftime("%a, %e %b %Y %T GMT"))]
     start_response('200 OK', response_headers)
     return [file_contents]
 
@@ -114,13 +124,15 @@ def serve_file(environ, start_response, file_path):
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
     if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
-        return serve_markdown_file(environ, start_response, file_extension, file_contents)
+        return serve_markdown_file(environ, start_response, file_extension, file_path, file_contents)
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
-        file_contents = generate_header(environ) + file_contents
+        file_contents = generate_header(environ, file_path) + file_contents
 
+    mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', mime_type + "; charset=utf-8"),
-                        ('Content-Length', str(len(file_contents)))]
+                        ('Content-Length', str(len(file_contents))),
+                        ('Last-Modified', mtime.strftime("%a, %e %b %Y %T GMT"))]
     start_response('200 OK', response_headers)
     return [file_contents]
 
