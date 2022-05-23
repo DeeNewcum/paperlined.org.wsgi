@@ -6,6 +6,7 @@
 
 import markdown, os, re
 from datetime import datetime
+import humanize             # https://pypi.org/project/humanize/
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -90,6 +91,7 @@ def generate_header(environ, file_path):
         hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">document last updated on '
         mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
         hdr += str.encode(mtime.strftime("%b %e, %Y"))
+        hdr += str.encode(" — " + humanize.naturaldelta(datetime.now() - mtime) + " ago")
         hdr += b'</div>'
     else:
         hdr += b'<br/>'
