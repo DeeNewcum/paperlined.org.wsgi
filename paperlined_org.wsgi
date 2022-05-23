@@ -86,7 +86,7 @@ def generate_header(environ, file_path):
         url += dl + b"/"
         dir_list_str += b" &gt; <a href='" + url + b"'>" + dl + b"</a>"
     hdr = re.sub(b"<<DIRLIST>>", dir_list_str[6:], HEADER)
-    if environ['PATH_INFO'] != '/':
+    if environ['PATH_INFO'] != '/' and file_path is not None:
         hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">last updated '
         mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
         hdr += str.encode(mtime.strftime("%b %e, %Y"))
@@ -153,7 +153,7 @@ def mod_autoindex(environ, start_response, file_path):
         else:
             output += "<a href='./" + fname + "'>" + fname + "</a><br/>\n"
 
-    output = generate_header(environ) + str.encode(output)
+    output = generate_header(environ, None) + str.encode(output)
     response_headers = [('Content-type', 'text/html'),
                         ('Content-Length', str(len(output)))]
     start_response('200 OK', response_headers)
