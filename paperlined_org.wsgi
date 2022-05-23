@@ -87,7 +87,7 @@ def generate_header(environ, file_path):
         dir_list_str += b" &gt; <a href='" + url + b"'>" + dl + b"</a>"
     hdr = re.sub(b"<<DIRLIST>>", dir_list_str[6:], HEADER)
     if environ['PATH_INFO'] != '/' and file_path is not None:
-        hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">last updated '
+        hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">document last updated on '
         mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
         hdr += str.encode(mtime.strftime("%b %e, %Y"))
         hdr += b'</div>'
