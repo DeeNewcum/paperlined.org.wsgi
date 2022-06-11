@@ -143,17 +143,25 @@ def mod_autoindex(environ, start_response, file_path):
     # TODO: can we use the http://.../icons/ folder ourselves?
             # -> It might work now, but I doubt it will after we switch to AWS Lambda.
 
-    output = "<h2>Index of " + environ['REQUEST_URI'] + "</h2>"
+    output = "<link rel='stylesheet' href='/css/wsgi_modautoindex.css'>\n"
+    output += "<h2>Index of " + environ['REQUEST_URI'] + "</h2>\n"
+    output += "<table>\n"
     files = os.listdir(file_path)
-    for filename in files:
-        path = os.path.join(file_path, filename)
+    files = [os.path.join(file_path, f) for f in files]        # add path to each file
+    files.sort(reverse=True, key=lambda x: os.path.getmtime(x))
+    for path in files:
         fname = splitall(path)[-1]
         if fname[0] == '.':         # skip dotfiles
             continue
         if os.path.isdir(path):
-            output += "<a href='./" + fname + "/'>" + fname + "/</a><br/>\n"
+            output += "<tr><td><a href='./" + fname + "/'>" + fname + "/</a>\n"
         else:
-            output += "<a href='./" + fname + "'>" + fname + "</a><br/>\n"
+            output += "<tr><td><a href='./" + fname + "'>" + fname + "</a>\n"
+
+        mtime = datetime.fromtimestamp(os.path.getmtime(path))
+        output += "    <td>" + mtime.strftime("%m/%d/%Y %H:%M") + "\n"
+
+    output += "</table>"
 
     output = generate_header(environ, None) + str.encode(output)
     response_headers = [('Content-type', 'text/html'),
