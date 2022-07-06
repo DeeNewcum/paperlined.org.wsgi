@@ -130,6 +130,8 @@ def serve_file(environ, start_response, file_path):
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
         file_contents = generate_header(environ, file_path) + file_contents
+    elif mime_type == 'text/x-perl':        # Firefox thinks that this MIME type should be automatically downloaded
+        mime_type = 'text/plain'
 
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', mime_type + "; charset=utf-8"),
