@@ -1,9 +1,11 @@
 On Ubuntu, run these commands:
 
-    sudo apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 
+    sudo apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 cpanminus
     sudo ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
 
 Then run these commands:
 
     sudo pip3 install markdown humanize
     sudo systemctl restart apache2.service
+
+    sudo cpanm JSON LWP Log::Log4perl
