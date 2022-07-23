@@ -1,7 +1,9 @@
-Sometime during the installation of this, you should run these commands:
+On Ubuntu, run these commands:
 
-    pip install markdown
+    sudo apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 
+    sudo ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
 
-Additionally, to run this inside Apache on Ubuntu, you'll probably want to:
+Then run these commands:
 
-    apt install libapache2-mod-wsgi-py3 
+    sudo pip3 install markdown humanize
+    sudo systemctl restart apache2.service
