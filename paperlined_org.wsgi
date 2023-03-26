@@ -54,6 +54,10 @@ def convert_URL_to_file_path(url):
         indexhtml = os.path.join(file_path, 'index.html')
         if os.path.exists(indexhtml):
             file_path = indexhtml
+        else:
+            indexmd = os.path.join(file_path, 'index.md')
+            if os.path.exists(indexmd):
+                file_path = indexmd
     return file_path
 
 
