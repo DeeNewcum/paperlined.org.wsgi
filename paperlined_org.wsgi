@@ -145,6 +145,7 @@ def serve_file(environ, start_response, file_path):
     return [file_contents]
 
 
+# generate a directory listing
 def mod_autoindex(environ, start_response, file_path):
     # TODO: can we use the http://.../icons/ folder ourselves?
             # -> It might work now, but I doubt it will after we switch to AWS Lambda.
