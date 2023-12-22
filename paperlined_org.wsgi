@@ -7,6 +7,10 @@
 import markdown, os, re
 from datetime import datetime
 import humanize             # https://pypi.org/project/humanize/
+try:
+    from html import escape  # python 3.x
+except ImportError:
+    from cgi import escape  # python 2.x
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -116,6 +120,17 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
     return [file_contents]
 
 
+def serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents):
+    file_contents = "<pre style='margin-top:3em; white-space:pre-wrap; max-width:60em'>" + escape(file_contents.decode()) + "</pre>"
+    file_contents = generate_header(environ, file_path) + str.encode(file_contents)
+    mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+    response_headers = [('Content-type', "text/html; charset=utf-8"),
+                        ('Content-Length', str(len(file_contents))),
+                        ('Last-Modified', mtime.strftime("%a, %e %b %Y %T GMT"))]
+    start_response('200 OK', response_headers)
+    return [file_contents]
+
+
 def serve_file(environ, start_response, file_path):
     file_content_array = []
     size = 0
@@ -129,6 +144,8 @@ def serve_file(environ, start_response, file_path):
                 break
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
+    if file_extension == 'txt':
+        return serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents)
     if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
         return serve_markdown_file(environ, start_response, file_extension, file_path, file_contents)
     mime_type = mime_types[file_extension]
