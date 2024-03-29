@@ -21,7 +21,7 @@ HEADER = b'''
 <head>
 </head>
 <body>
-<div style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
+<div id="website_banner" style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
     <a href="/" style="font-size:35px; font-weight:bold; color:#000!important; text-decoration:none">paperlined.org</a><br/>
     <span style="color:#777"><<DIRLIST>></span>
 </div>
