@@ -1,11 +1,69 @@
+
+        type ,S on the next line to enable hilighting of the command-line commands:
+            call clearmatches() |  call matchadd('ColorColumn', '^[ \t]*\zs.*[^ ] $')
+
+
 On Ubuntu, run these commands:
 
-    sudo apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 cpanminus
-    sudo ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
+    # Basic isntallation
+    sudo -i 
+    apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 cpanminus 
+    apt install python3-venv libaugeas0 
+    ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/ 
 
-Then run these commands:
 
-    sudo pip3 install markdown humanize
-    sudo systemctl restart apache2.service
+    apt install python3-markdown-include 
+    pip3 install --break-system-packages humanize 
+        (For more about the --break-system-packages, see https://veronneau.org/python-311-pip-and-breaking-system-packages.html )
 
-    sudo cpanm JSON LWP Log::Log4perl
+        Or, if you're not running on a Debian-based system (where you get
+        "error: externally-managed-environment", necessitating the above commands),
+        then you can run the original command:
+            sudo pip3 install markdown humanize 
+
+
+Then modify this file:
+
+    In /etc/apache2/sites-available/000-default.conf, paste this in:
+
+        WSGIScriptAlias / /var/www/wsgi/paperlined_org.wsgi
+        <Directory /var/www/wsgi>
+        Order allow,deny
+        Allow from all
+        </Directory>
+
+Then run:
+
+    systemctl daemon-reload 
+    systemctl restart apache2.service 
+
+    And verify that the web server is accessible from http://paperlined.org/.
+    (required for Certbot below to run properly)
+
+
+Then run this to install the certificate and setup HTTPS:
+
+    # from https://certbot.eff.org/instructions?ws=apache&os=pip
+
+    # remove Certbot
+    apt-get remove certbot 
+    # create Python virtual environment
+    python3 -m venv /opt/certbot/ 
+    /opt/certbot/bin/pip install --upgrade pip 
+    # install Certbot
+    /opt/certbot/bin/pip install certbot certbot-apache 
+    ln -s /opt/certbot/bin/certbot /usr/bin/certbot 
+    # create and install the certificate
+    certbot --apache 
+    
+    # potentially setup automatic renewl, as mentioned in the cron section of the above webpage
+
+
+Then run:
+
+    systemctl restart apache2.service 
+
+    And check that https://paperlined.org/ now works.
+
+    # needed for .update.recent.pl
+    cpanm JSON LWP Log::Log4perl 
