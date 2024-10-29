@@ -65,5 +65,14 @@ Then run:
 
     And check that https://paperlined.org/ now works.
 
+
+And some last commands:
     # needed for .update.recent.pl
     cpanm JSON LWP Log::Log4perl 
+
+    # needed for rurl / vimu / cdu
+    apt install plocate 
+
+    # I find these generally useful
+    apt install tree 
+
