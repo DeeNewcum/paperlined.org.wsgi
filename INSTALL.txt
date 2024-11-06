@@ -3,6 +3,13 @@
             call clearmatches() |  call matchadd('ColorColumn', '^[ \t]*\zs.*[^ ] $')
 
 
+In general, this setup expects the directories to be laid out like this:
+
+    /var/www/paperlined.org/
+
+    /var/www/wsgi/
+
+
 On Ubuntu, run these commands:
 
     # Basic isntallation
@@ -70,9 +77,8 @@ And some last commands:
     # needed for .update.recent.pl
     cpanm JSON LWP Log::Log4perl 
 
-    # needed for rurl / vimu / cdu
-    apt install plocate 
-
     # I find these generally useful
     apt install tree 
 
+    # needed for rurl / vimu / cdu, it might take a while to build the first index
+    apt install plocate 
