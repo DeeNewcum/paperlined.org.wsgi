@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# List all files that are useful for grepping within my website.
+
+# This should *not* end in a slash.
+ROOT=/var/www/paperlined.org
+
+find "$ROOT" -type f -not \( \
+        -path     "$ROOT/recent.html.gz" \
+        -or -path "$ROOT/recent.html" \
+        -or -path "$ROOT/index.html" \
+        -or -path "$ROOT/.index_filelist" \
+        -or -path "$ROOT/m/recent.html" \
+        -or -path "$ROOT/private/recent.html" \
+        -or -path "$ROOT/private/recent.html.gz" \
+        -or -path "$ROOT/documentation.html" \
+    \) -print0
