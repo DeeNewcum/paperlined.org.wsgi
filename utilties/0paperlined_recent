@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+0read /var/www/paperlined.org/.index_filelist
