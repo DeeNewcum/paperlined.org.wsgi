@@ -19,6 +19,7 @@ HEADER = b'''
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="/css/whole_site.css" />
 </head>
 <body>
 <div id="website_banner" style="background-color:#88cccc; padding:0.5em; display:table-cell; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
