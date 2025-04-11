@@ -1,3 +1,3 @@
 This is a [WSGI server](https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface) that sits in front of all of my website's static content. It does a few duties, such as adding a standard header and converting markdown files to HTML.
 
-[Here's the manual](https://python-markdown.github.io/#differences) for this particular Markdown renderer. Also note that there are [extensions available](https://python-markdown.github.io/extensions/).
+[Here's the manual](https://python-markdown.github.io/#differences) for this particular Markdown renderer. Also note that there are extensions available, both [officially-sanctioned extensions](https://python-markdown.github.io/extensions/#officially-supported-extensions) as well as [third-party extensions](https://github.com/Python-Markdown/markdown/wiki/Third-Party-Extensions).
