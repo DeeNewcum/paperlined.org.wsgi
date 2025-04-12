@@ -77,8 +77,8 @@ And some last commands:
     # needed for .update.recent.pl
     cpanm JSON LWP Log::Log4perl 
 
-    # I find these generally useful
-    apt install tree 
+    # I find these generally useful.
+    apt install tree grc
 
-    # needed for rurl / vimu / cdu, it might take a while to build the first index
+    # Needed for rurl / vimu / cdu. It might take a while to build the first index.
     apt install plocate 
