@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+## Do a health-check using curl, to try to contact our own webserver. If it seems to be
+## unresponsive, then restart it.
+##
+## The intent here is to call this from a cron script.
+
+curl --max-time 5 \
+    --silent --show-error --fail \
+    https://paperlined.org/ \
+        > /dev/null
+
+if [ "$?" -ne 0 ]; then
+    >&2  echo "Restarting."
+    sudo apachectl restart
+else
+    >&2  echo "All good."
+fi
