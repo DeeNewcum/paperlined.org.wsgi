@@ -5,14 +5,21 @@
 ##
 ## The intent here is to call this from a cron script.
 
-curl --max-time 5 \
+
+## To install this, add this to root's cron:
+##
+##      0,10,20,30,40,50 * * * *    /var/www/wsgi/utilties/restart_apache_if_uncontactable >> /var/log/cron.restart_apache_if_uncontactable.log 2>&1
+
+
+            # a 3 second timeout for localhost should be *plenty*
+curl --max-time 3 \
     --silent --show-error --fail \
     https://paperlined.org/ \
         > /dev/null
 
 if [ "$?" -ne 0 ]; then
-    >&2  echo "Restarting."
+    echo "$(date) -- Restarting."
     sudo apachectl restart
 else
-    >&2  echo "All good."
+    echo "$(date) -- All good."
 fi
