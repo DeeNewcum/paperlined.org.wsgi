@@ -110,7 +110,8 @@ def generate_header(environ, file_path):
 def serve_markdown_file(environ, start_response, file_extension, file_path, file_contents):
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
         file_contents = file_contents[40:]
-    file_contents = markdown.markdown(file_contents.decode('utf-8'))
+    file_contents = markdown.markdown(file_contents.decode('utf-8'),
+                extensions=['md_in_html'])
     file_contents = "<link rel='stylesheet' href='/css/Python-Markdown.css' />" + file_contents
     file_contents = generate_header(environ, file_path) + str.encode(file_contents)
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
