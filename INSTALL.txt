@@ -20,7 +20,7 @@ On Ubuntu, run these commands:
 
 
     apt install python3-markdown-include 
-    pip3 install --break-system-packages humanize 
+    pip3 install --break-system-packages humanize mdx_linkify
         (For more about the --break-system-packages, see https://veronneau.org/python-311-pip-and-breaking-system-packages.html )
 
         Or, if you're not running on a Debian-based system (where you get
