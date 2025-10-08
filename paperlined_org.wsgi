@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # This is a very thin layer that sits between the webserver (i.e. Apache) and the filesystem.
 # My site is static for the most part, but we do a bit of dynamic work here only.
 #
@@ -220,9 +222,9 @@ def redirect_to_directory(environ, start_response, file_path):
 
 
 def error_404_not_exist(environ, start_response, file_path):
-    output = '<h3>Error: ' + environ['REQUEST_URI'] + ' not found</h3>'
+    output = ( generate_header(environ, None) +
+                str.encode( '<h2>Error: ' + environ['REQUEST_URI'] + ' not found</h2>' ) )
 
-    output = str.encode(output)
     response_headers = [('Content-type',   'text/html'),
                         ('Content-Length', str(len(output)))
                        ]
