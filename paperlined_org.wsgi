@@ -22,7 +22,7 @@ WEBSITE_ROOT = '/var/www/paperlined.org/'
 # this could be a separate file
 HEADER = b'''
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <link rel="stylesheet" href="/css/whole_site.css" />
 </head>
