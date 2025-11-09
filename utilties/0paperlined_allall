@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# List all files that are useful for grepping within my website. -- But more thoroughly than
+# 0paperlined_all.
+
+# This should *not* end in a slash.
+ROOT=/var/www/paperlined.org
+
+find "$ROOT" -type f \
+         \( -iname '*.md' -or -iname '*.html' -or -iname '*.txt' \) \
+         -print0 \
+    | perl -0e 'print join chr(0), sort {-M $b <=> -M $a} map {chomp; $_} <>'
+                                       #  ^^^^^^^^^^^^^^  by default, sort with the most recently
+                                       #                modified files last
