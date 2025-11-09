@@ -2,6 +2,8 @@
 
 # List all files that are useful for grepping within my website.
 
+echo "Note: 0paperlined_all doesn't currently include any files from paperlined.org/tmp/ or any of the private directories." >&2
+
 # This should *not* end in a slash.
 ROOT=/var/www/paperlined.org
 
