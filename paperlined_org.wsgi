@@ -19,7 +19,7 @@ import mdx_linkify              # a markdown extension  https://github.com/daGre
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
-# this could be a separate file
+# This could be a separate file.
 HEADER = b'''
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +36,7 @@ HEADER = b'''
 '''
 
 # Returns a list of the file path completely split apart.
-# from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
+# From https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
 def splitall(path):
     allparts = []
     while 1:
@@ -52,7 +52,7 @@ def splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
-# actually it converts environ['PATH_INFO'], which is the latter part of the URL
+# Actually, it converts environ['PATH_INFO'], which is the latter part of the URL.
 def convert_URL_to_file_path(url):
     if url.find('/../') >= 0:       # Prevent security problems. (though I think that the browser
         return WEBSITE_ROOT         # and Apache both take care of this before it gets here)
@@ -78,7 +78,7 @@ def parse_mime_types_line(line):
     for field in fields[1:]:
         mime_types[field] = fields[0]
 
-# parse /etc/mime.types
+# Parse /etc/mime.types
 def read_mime_types():
     with open('/etc/mime.types', 'r') as open_file:
         line = open_file.readline()
@@ -88,7 +88,7 @@ def read_mime_types():
             line = open_file.readline()
 
 
-# attach the cyan "paperlined.org" box that appears at the top of every page on this site
+# Attach the cyan "paperlined.org" box that appears at the top of every page on this site
 def generate_header(environ, file_path):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
@@ -171,7 +171,7 @@ def serve_file(environ, start_response, file_path):
     return [file_contents]
 
 
-# generate a directory listing
+# Generate a directory listing
 def mod_autoindex(environ, start_response, file_path):
     # TODO: can we use the http://.../icons/ folder ourselves?
             # -> It might work now, but I doubt it will after we switch to AWS Lambda.
@@ -203,7 +203,7 @@ def mod_autoindex(environ, start_response, file_path):
     return [output]
 
 
-# redirect for example http://paperlined.org/apps to http://paperlined.org/apps/
+# Redirect, for example http://paperlined.org/apps to http://paperlined.org/apps/
 def redirect_to_directory(environ, start_response, file_path):
     output = 'The document has moved <A HREF="' + environ['REQUEST_URI'] + '/">here</A>.<P>'
 
