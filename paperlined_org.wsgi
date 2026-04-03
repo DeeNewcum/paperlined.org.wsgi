@@ -93,13 +93,17 @@ def generate_header(environ, file_path):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
     dir_list.pop(0)     # drop the initial backslash
+    mod_autoindex = b""
     if environ['PATH_INFO'][-1] == '/' and len(dir_list) > 0:
-        dir_list.pop()          # we don't need to link to our current directory
+        mod_autoindex = dir_list.pop()          # we don't need to link to our current directory
     url = b"/"
     dir_list_str = b""
     for dl in dir_list:
         url += dl + b"/"
         dir_list_str += b" &gt; <a href='" + url + b"'>" + dl + b"</a>"
+    # For directory listings, still include the current directory, but don't link it.
+    if mod_autoindex:
+        dir_list_str += b" &gt; <span style='color:black'>" + mod_autoindex + b"</span>"
     hdr = re.sub(b"<<DIRLIST>>", dir_list_str[6:], HEADER)
     if environ['PATH_INFO'] != '/' and file_path is not None:
         hdr += b'<div style="margin-left:4em; margin-top: 1em; margin-bottom:0.8em">document updated '
