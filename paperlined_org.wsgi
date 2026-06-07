@@ -16,6 +16,7 @@ except ImportError:
 import humanize                 # https://github.com/python-humanize/humanize
 import markdown                 # https://github.com/Python-Markdown/markdown
 import mdx_linkify              # a markdown extension  https://github.com/daGrevis/mdx_linkify
+from bleach.linkifier import build_url_re
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -120,9 +121,15 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
         file_contents = file_contents[40:]
     file_contents = markdown.markdown(file_contents.decode('utf-8'),
-                extensions=['md_in_html',
-                            mdx_linkify.mdx_linkify.LinkifyExtension(linker_options={"parse_email": True})
-                            ])
+                extensions=[
+
+                    'md_in_html',
+
+                    mdx_linkify.mdx_linkify.LinkifyExtension(linker_options={
+                                    "parse_email": True,
+                                    #"url_re":      build_url_re(["app", "custom2"])
+                                })
+                ])
     file_contents = "<link rel='stylesheet' href='/css/Python-Markdown.css' />" + file_contents
     file_contents = generate_header(environ, file_path) + str.encode(file_contents)
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
