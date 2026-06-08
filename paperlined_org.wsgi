@@ -53,6 +53,7 @@ def splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
+
 # Actually, it converts environ['PATH_INFO'], which is the latter part of the URL.
 def convert_URL_to_file_path(url):
     if url.find('/../') >= 0:       # Prevent security problems. (though I think that the browser
@@ -78,6 +79,7 @@ def parse_mime_types_line(line):
     fields = line.split()
     for field in fields[1:]:
         mime_types[field] = fields[0]
+
 
 # Parse /etc/mime.types
 def read_mime_types():
