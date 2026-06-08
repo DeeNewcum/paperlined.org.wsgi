@@ -90,7 +90,7 @@ def read_mime_types():
 
 
 # Attach the cyan "paperlined.org" box that appears at the top of every page on this site
-def generate_header(environ, file_path):
+def generate_HTML_header(environ, file_path):
     dir_list = str.encode(environ['PATH_INFO']).split(b'/')
     dir_list.pop()      # drop the file name
     dir_list.pop(0)     # drop the initial backslash
@@ -131,7 +131,7 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
                                 })
                 ])
     file_contents = "<link rel='stylesheet' href='/css/Python-Markdown.css' />" + file_contents
-    file_contents = generate_header(environ, file_path) + str.encode(file_contents)
+    file_contents = generate_HTML_header(environ, file_path) + str.encode(file_contents)
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', "text/html; charset=utf-8"),
                         ('Content-Length', str(len(file_contents))),
@@ -142,7 +142,7 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
 
 def serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents):
     file_contents = "<pre style='margin-top:3em; white-space:pre-wrap; max-width:60em'>" + escape(file_contents.decode()) + "</pre>"
-    file_contents = generate_header(environ, file_path) + str.encode(file_contents)
+    file_contents = generate_HTML_header(environ, file_path) + str.encode(file_contents)
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', "text/html; charset=utf-8"),
                         ('Content-Length', str(len(file_contents))),
@@ -170,7 +170,7 @@ def serve_file(environ, start_response, file_path):
         return serve_markdown_file(environ, start_response, file_extension, file_path, file_contents)
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
-        file_contents = generate_header(environ, file_path) + file_contents
+        file_contents = generate_HTML_header(environ, file_path) + file_contents
     elif mime_type == 'text/x-perl':        # Firefox thinks that this MIME type should be automatically downloaded
         mime_type = 'text/plain'
 
@@ -207,7 +207,7 @@ def mod_autoindex(environ, start_response, file_path):
 
     output += "</table>"
 
-    output = generate_header(environ, None) + str.encode(output)
+    output = generate_HTML_header(environ, None) + str.encode(output)
     response_headers = [('Content-type', 'text/html'),
                         ('Content-Length', str(len(output)))]
     start_response('200 OK', response_headers)
@@ -233,7 +233,7 @@ def redirect_to_directory(environ, start_response, file_path):
 
 
 def error_404_not_exist(environ, start_response, file_path):
-    output = ( generate_header(environ, None) +
+    output = ( generate_HTML_header(environ, None) +
                 str.encode( '<h2>Error: ' + environ['REQUEST_URI'] + ' not found</h2>' ) )
 
     response_headers = [('Content-type',   'text/html'),
