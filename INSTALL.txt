@@ -12,27 +12,40 @@ In general, this setup expects the directories to be laid out like this:
 
 On Ubuntu, run these commands:
 
-    # Basic isntallation
+    # Basic setup
     sudo -i 
+
     apt install python3 python3-pip apache2 libapache2-mod-wsgi-py3 cpanminus 
-    apt install python3-venv libaugeas0 
+    apt install python3-virtualenv libaugeas0 
+
+    # Enable mod_rewrite
     ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/ 
 
+    mkdir -P /var/www/wsgi/
+    mkdir -P /var/www/wsgi/python_virtualenv/
 
-    apt install python3-markdown-include 
-    pip3 install --break-system-packages humanize mdx_linkify
-        (For more about the --break-system-packages, see https://veronneau.org/python-311-pip-and-breaking-system-packages.html )
+    # Create virtual environment
+            ## NOTE THAT THIS ISN'T FULLY VETTED YET.
+            ## TODO: It needs to be run on a fully-new VM, to see if it works properly.
+    VENV=/var/www/wsgi/python_virtualenv
+    virtualenv $VENV                # documentation: https://virtualenv.pypa.io/en/latest/
+    source $VENV/bin/activate
+    pip install --upgrade pip
 
-        Or, if you're not running on a Debian-based system (where you get
-        "error: externally-managed-environment", necessitating the above commands),
-        then you can run the original command:
-            sudo pip3 install markdown humanize 
+    # Install Python libraries that are found in Ubuntu.
+    apt install python3-markdown-include
+
+    # Install Python libraries that are not found in Ubuntu. (into the virtual env)
+    pip3 install humanize mdx_linkify
+
+    chown -R ubuntu:ubuntu /var/www/wsgi/
 
 
 Then modify this file:
 
     In /etc/apache2/sites-available/000-default.conf, paste this in:
 
+        WSGIDaemonProcess www-data python-home=/var/www/wsgi/python_virtualenv/
         WSGIScriptAlias / /var/www/wsgi/paperlined_org.wsgi
         <Directory /var/www/wsgi>
         Order allow,deny
