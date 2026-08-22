@@ -9,6 +9,7 @@
 import os
 import re
 from datetime import datetime
+import time
 try:
     from html import escape  # python 3.x
 except ImportError:
@@ -71,6 +72,19 @@ def convert_URL_to_file_path(url):
             if os.path.exists(indexmd):
                 file_path = indexmd
     return file_path
+
+
+# Convert an internal Python-style date to an date formatted as stated in the HTTP spec (RFC7231
+# section 7.1.1.1). The HTTP-style date is used in HTTP fields such as Date:, Last-Modified:, 
+# and If-Unmodified-Since:.
+#
+# An example of an HTTP date:    Tue, 29 Oct 2024 16:56:32 GMT
+def Python_date_to_HTTP_date(date):
+    return date.strftime("%a, %e %b %Y %T %Z")
+
+
+def HTTP_date_to_Python_date(string):
+    return time.strptime("%a, %e %b %Y %T %Z")
 
 
 mime_types = { }
