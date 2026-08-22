@@ -14,6 +14,7 @@ try:
     from html import escape  # python 3.x
 except ImportError:
     from cgi import escape  # python 2.x
+import yaml
 import humanize                 # https://github.com/python-humanize/humanize
 import markdown                 # https://github.com/Python-Markdown/markdown
 import mdx_linkify              # a markdown extension  https://github.com/daGrevis/mdx_linkify

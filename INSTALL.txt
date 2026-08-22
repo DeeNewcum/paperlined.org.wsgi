@@ -22,7 +22,6 @@ On Ubuntu, run these commands:
     ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/ 
 
     mkdir -P /var/www/wsgi/
-    mkdir -P /var/www/wsgi/python_virtualenv/
 
     # Create virtual environment
             ## NOTE THAT THIS ISN'T FULLY VETTED YET.
@@ -33,10 +32,10 @@ On Ubuntu, run these commands:
     pip install --upgrade pip
 
     # Install Python libraries that are found in Ubuntu.
-    apt install python3-markdown-include
+    apt install python3-markdown-include python3-yaml
 
     # Install Python libraries that are not found in Ubuntu. (into the virtual env)
-    pip3 install humanize mdx_linkify
+    pip3 install humanize mdx_linkify pyyaml yaml_header_tools
 
     chown -R ubuntu:ubuntu /var/www/wsgi/
 

@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+#   source /var/www/wsgi/python_virtualenv/bin/activate
+
+import yaml
+from yaml_header_tools import *
+import sys
+
+
+# A tiny wrapper around yaml_header_tools.get_header_from_file().
+# 
+# Returns the same format that get_header_from_file(filename, False, True) returns, that is:
+# a dictionary where:
+#       return[0]       The YAML header, parsed.
+#       return[1]       The main body, as separate lines.
+def parse_yaml_header(filename):
+    try:
+        return yaml_header_tools.get_header_from_file(filename, False, True)
+    except NoValidHeader:
+        with open(filename) as f:
+            textlines = f.readlines()
+        return [ [], textlines ]
+    return
+
+
+for filename in sys.argv[1:]:
+
+    #file_sections = get_header_from_file(filename, False, True)
+    file_sections = parse_yaml_header(filename)
+    
+    print(file_sections[0])
+
+    print("\n\n\n")
+
+    print(file_sections[1])
