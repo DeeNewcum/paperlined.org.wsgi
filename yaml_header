@@ -7,12 +7,11 @@ from yaml_header_tools import *
 import sys
 
 
-# A tiny wrapper around yaml_header_tools.get_header_from_file().
-# 
-# Returns the same format that get_header_from_file(filename, False, True) returns, that is:
-# a dictionary where:
-#       return[0]       The YAML header, parsed.
-#       return[1]       The main body, as separate lines.
+# Separates the YAML header (if any) from the body of 
+#
+# Returns a dictionary where:
+#       returned[0]     The YAML header, parsed.
+#       returned[1]     The main body, as a list of lines.
 def parse_yaml_header(filename):
     try:
         return yaml_header_tools.get_header_from_file(filename, False, True)
