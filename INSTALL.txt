@@ -44,7 +44,11 @@ Then modify this file:
 
     In /etc/apache2/sites-available/000-default.conf, paste this in:
 
-        WSGIDaemonProcess www-data python-home=/var/www/wsgi/python_virtualenv/
+        # list this at the very top, ABOVE the <VirtualHost>
+        WSGIPythonHome /var/www/wsgi/python_virtualenv/
+
+        ...
+
         WSGIScriptAlias / /var/www/wsgi/paperlined_org.wsgi
         <Directory /var/www/wsgi>
         Order allow,deny

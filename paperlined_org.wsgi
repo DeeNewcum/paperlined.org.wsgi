@@ -17,8 +17,13 @@ except ImportError:
 import yaml
 import humanize                 # https://github.com/python-humanize/humanize
 import markdown                 # https://github.com/Python-Markdown/markdown
+
+#   source /var/www/wsgi/python_virtualenv/bin/activate
 import mdx_linkify              # a markdown extension  https://github.com/daGrevis/mdx_linkify
 from bleach.linkifier import build_url_re
+import yaml
+from yaml_header_tools import *
+
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
 
@@ -37,6 +42,24 @@ HEADER = b'''
 <!-- End of Header -->
 
 '''
+
+
+
+# Separates the YAML header (if any) from the body of 
+#
+# Returns a dictionary where:
+#       returned[0]     The YAML header, parsed.
+#       returned[1]     The main body, as a list of lines.
+def yaml_parse_header(filename):
+    try:
+        return yaml_header_tools.get_header_from_file(filename, False, True)
+    except NoValidHeader:
+        with open(filename) as f:
+            textlines = f.readlines()
+        return [ [], textlines ]
+    return
+
+
 
 # Returns a list of the file path completely split apart.
 # From https://www.oreilly.com/library/view/python-cookbook/0596001673/ch04s16.html
