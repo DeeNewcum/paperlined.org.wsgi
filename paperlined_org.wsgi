@@ -14,15 +14,16 @@ try:
     from html import escape  # python 3.x
 except ImportError:
     from cgi import escape  # python 2.x
-import yaml
 import humanize                 # https://github.com/python-humanize/humanize
 import markdown                 # https://github.com/Python-Markdown/markdown
 
 #   source /var/www/wsgi/python_virtualenv/bin/activate
 import mdx_linkify              # a markdown extension  https://github.com/daGrevis/mdx_linkify
 from bleach.linkifier import build_url_re
+
 import yaml
 from yaml_header_tools import *
+
 
 
 WEBSITE_ROOT = '/var/www/paperlined.org/'
@@ -58,7 +59,6 @@ def yaml_parse_header(filename):
             textlines = f.readlines()
         return [ [], textlines ]
     return
-
 
 
 # Returns a list of the file path completely split apart.
@@ -159,6 +159,7 @@ def generate_HTML_header(environ, file_path):
 
 def serve_markdown_file(environ, start_response, file_extension, file_path, file_contents):
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
+        # Trim off the <script ... strapdown.js"> first line, and treat the rest as markdown.
         file_contents = file_contents[40:]
     file_contents = markdown.markdown(file_contents.decode('utf-8'),
                 extensions=[
@@ -192,6 +193,7 @@ def serve_plaintext_file(environ, start_response, file_extension, file_path, fil
 
 
 def serve_file(environ, start_response, file_path):
+    # Read the file's contents.
     file_content_array = []
     size = 0
     with open(file_path, mode='rb') as file:
@@ -204,10 +206,14 @@ def serve_file(environ, start_response, file_path):
                 break
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
+
     if file_extension == 'txt':
         return serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents)
     if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
+        # /js/strapdown.js indicates that it's at the bottom an HTML file, but that it ultimately
+        # gets interpretted as holding markdown content.
         return serve_markdown_file(environ, start_response, file_extension, file_path, file_contents)
+
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
         file_contents = generate_HTML_header(environ, file_path) + file_contents
@@ -288,7 +294,7 @@ def application(environ, start_response):
     file_path = convert_URL_to_file_path(environ['PATH_INFO'])
     if not os.path.exists(file_path):
         return error_404_not_exist(environ, start_response, file_path)
-    elif environ['PATH_INFO'][-1] != '/' and file_path[-1] == '/':    # redirect for example http://paperlined.org/apps to http://paperlined.org/apps/
+    elif environ['PATH_INFO'][-1] != '/' and file_path[-1] == '/':    # redirect, for example, http://paperlined.org/apps to http://paperlined.org/apps/
         return redirect_to_directory(environ, start_response, file_path)
     elif os.path.isfile(file_path):
         return serve_file(environ, start_response, file_path)
