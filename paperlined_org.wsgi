@@ -161,7 +161,7 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
     if file_extension == "html" and file_contents[0:31] == b'<script src="/js/strapdown.js">':
         # Trim off the <script ... strapdown.js"> first line, and treat the rest as markdown.
         file_contents = file_contents[40:]
-    file_contents = markdown.markdown(file_contents.decode('utf-8'),
+    file_contents = markdown.markdown(file_contents,
                 extensions=[
 
                     'md_in_html',
@@ -182,7 +182,7 @@ def serve_markdown_file(environ, start_response, file_extension, file_path, file
 
 
 def serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents):
-    file_contents = "<pre style='margin-top:3em; white-space:pre-wrap; max-width:60em'>" + escape(file_contents.decode()) + "</pre>"
+    file_contents = "<pre style='margin-top:3em; white-space:pre-wrap; max-width:60em'>" + escape(file_contents) + "</pre>"
     file_contents = generate_HTML_header(environ, file_path) + str.encode(file_contents)
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
     response_headers = [('Content-type', "text/html; charset=utf-8"),
@@ -207,23 +207,34 @@ def serve_file(environ, start_response, file_path):
     file_extension = file_path.split('.')[-1].lower()
     file_contents = b''.join(file_content_array)
 
+    encoding = 'utf-8'
+    try:
+        contents_decoded = file_contents.decode('utf-8')       # For now, always assume text files are UTF-8.
+    except UnicodeDecodeError :
+        # It's probably not a text file.
+        encoding = None
+        contents_decoded = file_contents
+
     if file_extension == 'txt':
-        return serve_plaintext_file(environ, start_response, file_extension, file_path, file_contents)
+        return serve_plaintext_file(environ, start_response, file_extension, file_path, contents_decoded)
     if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
         # /js/strapdown.js indicates that it's at the bottom an HTML file, but that it ultimately
         # gets interpretted as holding markdown content.
-        return serve_markdown_file(environ, start_response, file_extension, file_path, file_contents)
+        return serve_markdown_file(environ, start_response, file_extension, file_path, contents_decoded)
 
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
         file_contents = generate_HTML_header(environ, file_path) + file_contents
     elif mime_type == 'text/x-perl':        # Firefox thinks that this MIME type should be automatically downloaded
         mime_type = 'text/plain'
+    content_type = mime_type
+    if encoding != None:
+        content_type += "; charset=" + encoding
 
     mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
-    response_headers = [('Content-type', mime_type + "; charset=utf-8"),
+    response_headers = [('Content-type',   content_type),
                         ('Content-Length', str(len(file_contents))),
-                        ('Last-Modified', mtime.strftime("%a, %e %b %Y %T GMT"))]
+                        ('Last-Modified',  mtime.strftime("%a, %e %b %Y %T GMT"))]
     start_response('200 OK', response_headers)
     return [file_contents]
 
