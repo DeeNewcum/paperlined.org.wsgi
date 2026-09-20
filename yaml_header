@@ -7,12 +7,12 @@ from yaml_header_tools import *
 import sys
 
 
-# Separates the YAML header (if any) from the body of 
+# Separates the YAML header (if any) from the body of a text file.
 #
 # Returns a dictionary where:
 #       returned[0]     The YAML header, parsed.
 #       returned[1]     The main body, as a list of lines.
-def parse_yaml_header(filename):
+def parse_yaml_header_from_file(filename):
     try:
         return yaml_header_tools.get_header_from_file(filename, False, True)
     except NoValidHeader:
@@ -22,11 +22,25 @@ def parse_yaml_header(filename):
     return
 
 
+def parse_yaml_header_from_string(string):
+    clean = False
+    textlines = string.splitlines(True)
+    try:
+        # This is taken verbatim from yaml_header_tools.get_header_from_file().
+        return [ get_header(textlines, clean), get_main_content(textlines) ]
+    except NoValidHeader:
+        return [ [], textlines ]
+    return
+
+
 for filename in sys.argv[1:]:
 
-    #file_sections = get_header_from_file(filename, False, True)
-    file_sections = parse_yaml_header(filename)
+    #file_sections = parse_yaml_header_from_file(filename)
     
+    with open(filename, encoding="utf-8") as f:
+        file_contents = f.read()
+    file_sections = parse_yaml_header_from_string(file_contents)
+
     print(file_sections[0])
 
     print("\n\n\n")
