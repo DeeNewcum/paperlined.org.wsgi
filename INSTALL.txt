@@ -91,7 +91,7 @@ Then run:
 
 And some last commands:
     # needed for .update.recent.pl
-    cpanm JSON LWP Log::Log4perl 
+    cpanm JSON LWP Log::Log4perl YAMP::PP
 
     # I find these generally useful.
     apt install tree grc
