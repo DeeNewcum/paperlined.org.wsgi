@@ -46,18 +46,19 @@ HEADER = b'''
 
 
 
-# Separates the YAML header (if any) from the body of 
+# Separates the YAML header (if any) from the body of a text string.
 #
 # Returns a dictionary where:
 #       returned[0]     The YAML header, parsed.
 #       returned[1]     The main body, as a list of lines.
-def yaml_parse_header(filename):
+def yaml_parse_header(file_contents):
+    clean = False
+    textlines = file_contents.splitlines(True)
     try:
-        return yaml_header_tools.get_header_from_file(filename, False, True)
+        # This is taken almost verbatim from yaml_header_tools.get_header_from_file().
+        return [ get_header(textlines, clean), ''.join(get_main_content(textlines)) ]
     except NoValidHeader:
-        with open(filename) as f:
-            textlines = f.readlines()
-        return [ [], textlines ]
+        return [ [], file_contents ]
     return
 
 
@@ -215,12 +216,15 @@ def serve_file(environ, start_response, file_path):
         encoding = None
         contents_decoded = file_contents
 
-    if file_extension == 'txt':
-        return serve_plaintext_file(environ, start_response, file_extension, file_path, contents_decoded)
-    if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
-        # /js/strapdown.js indicates that it's at the bottom an HTML file, but that it ultimately
-        # gets interpretted as holding markdown content.
-        return serve_markdown_file(environ, start_response, file_extension, file_path, contents_decoded)
+    if (encoding == 'utf-8'):
+        yaml, contents_decoded = yaml_parse_header(contents_decoded)
+
+        if file_extension == 'txt':
+            return serve_plaintext_file(environ, start_response, file_extension, file_path, contents_decoded)
+        if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
+            # /js/strapdown.js indicates that it's at the bottom an HTML file, but that it ultimately
+            # gets interpretted as holding markdown content.
+            return serve_markdown_file(environ, start_response, file_extension, file_path, contents_decoded)
 
     mime_type = mime_types[file_extension]
     if mime_type == 'text/html':
