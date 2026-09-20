@@ -222,6 +222,10 @@ def serve_file(environ, start_response, file_path):
         if file_extension == 'txt':
             return serve_plaintext_file(environ, start_response, file_extension, file_path, contents_decoded)
         if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
+            if (yaml['title']):
+                contents_decoded = \
+                    '<title>' + yaml['title'] + '</title>\n' + '# ' + yaml['title'] + '\n' \
+                    + contents_decoded
             # /js/strapdown.js indicates that it's at the bottom an HTML file, but that it ultimately
             # gets interpretted as holding markdown content.
             return serve_markdown_file(environ, start_response, file_extension, file_path, contents_decoded)
