@@ -58,7 +58,7 @@ def yaml_parse_header(file_contents):
         # This is taken almost verbatim from yaml_header_tools.get_header_from_file().
         return [ get_header(textlines, clean), ''.join(get_main_content(textlines)) ]
     except NoValidHeader:
-        return [ [], file_contents ]
+        return [ {}, file_contents ]
     return
 
 
@@ -222,7 +222,7 @@ def serve_file(environ, start_response, file_path):
         if file_extension == 'txt':
             return serve_plaintext_file(environ, start_response, file_extension, file_path, contents_decoded)
         if file_extension == 'md' or file_contents[0:31] == b'<script src="/js/strapdown.js">':
-            if (yaml['title']):
+            if ('title' in yaml):
                 contents_decoded = \
                     '<title>' + yaml['title'] + '</title>\n' + '# ' + yaml['title'] + '\n' \
                     + contents_decoded
